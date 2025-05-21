@@ -215,9 +215,11 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                 !isMobileOrTablet || mobileView === 'holidays'
                   ? 'flex'
                   : 'none',
-              flex: { md: '0 0 400px' },
+              flex: { md: '0 0 350px', lg: '0 0 400px', xl: '0 0 450px' },
               height: '100%',
               minHeight: 0,
+              maxWidth: { md: '350px', lg: '400px', xl: '450px' },
+              width: '100%',
             }}
           >
             <HolidayList

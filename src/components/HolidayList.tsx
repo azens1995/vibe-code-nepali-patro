@@ -39,24 +39,28 @@ const HolidayList: React.FC<HolidayListProps> = ({
           borderRadius: 1,
           mb: 0.5,
           bgcolor: isCurrentMonth ? 'action.selected' : 'transparent',
+          width: '100%',
         }}
       >
         <ListItemButton
           onClick={() => onDateSelect(year, monthNum, dayNum)}
           sx={{
             'borderRadius': 1,
+            'width': '100%',
             '&:hover': {
               bgcolor: 'action.hover',
             },
           }}
         >
           <ListItemText
+            sx={{ width: '100%' }}
             primary={
               <Typography
                 variant='body1'
                 sx={{
                   fontWeight: isCurrentMonth ? 600 : 400,
                   color: 'text.primary',
+                  width: '100%',
                 }}
               >
                 {holiday}
@@ -68,6 +72,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
                 sx={{
                   color: 'text.secondary',
                   fontSize: '0.875rem',
+                  width: '100%',
                 }}
               >
                 {`${getNepaliMonthName(monthNum, i18n.language)} ${dayNum}`}
@@ -84,6 +89,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
       elevation={3}
       sx={{
         height: '100%',
+        width: '100%',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -95,6 +101,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
       <Box
         sx={{
           p: 2,
+          width: '100%',
           borderBottom: '1px solid',
           borderColor: 'divider',
           bgcolor: 'background.paper',
@@ -114,12 +121,13 @@ const HolidayList: React.FC<HolidayListProps> = ({
       <Box
         sx={{
           flex: 1,
+          width: '100%',
           overflow: 'auto',
           px: 2,
           py: 1,
         }}
       >
-        <List sx={{ py: 0 }}>
+        <List sx={{ py: 0, width: '100%' }}>
           {Object.entries(holidays).map(
             ([month, monthHolidays], monthIndex) => (
               <React.Fragment key={month}>
@@ -128,6 +136,7 @@ const HolidayList: React.FC<HolidayListProps> = ({
                     sx={{
                       my: 1,
                       opacity: 0.5,
+                      width: '100%',
                     }}
                   />
                 )}
