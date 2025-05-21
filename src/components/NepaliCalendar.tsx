@@ -9,8 +9,6 @@ import {
   InputLabel,
   Typography,
   IconButton,
-  Divider,
-  Drawer,
   BottomNavigation,
   BottomNavigationAction,
   useMediaQuery,
@@ -30,7 +28,6 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { getEnglishDate } from '../utils/dateConversion';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Header from './Header';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EventIcon from '@mui/icons-material/Event';
@@ -52,25 +49,17 @@ interface Holiday {
   day: number;
 }
 
-interface MonthHolidays {
-  [key: string]: string;
-}
-
-interface YearHolidays {
-  [key: number]: MonthHolidays;
-}
-
 const HolidayList: React.FC<{ year: number; currentMonth: number }> = ({
   year,
   currentMonth,
 }) => {
-  const allHolidays: YearHolidays = getAllHolidays(year);
+  const allHolidays = getAllHolidays(year);
   const holidays: Holiday[] = [];
 
   // Convert the holiday data structure into a flat array
   Object.entries(allHolidays).forEach(([monthStr, monthHolidays]) => {
     const month = Number(monthStr);
-    Object.entries(monthHolidays as MonthHolidays).forEach(([dayStr, name]) => {
+    Object.entries(monthHolidays).forEach(([dayStr, name]) => {
       const day = Number(dayStr);
       holidays.push({
         date: `${getNepaliMonthName(month, 'en')} ${day}`,
@@ -209,10 +198,6 @@ const NepaliCalendar: React.FC = () => {
     setSelectedDay(currentDate.day);
   }, []);
 
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-  };
-
   const handleNextMonth = () => {
     if (month === 12) {
       setMonth(1);
@@ -266,41 +251,8 @@ const NepaliCalendar: React.FC = () => {
     }));
   };
 
-  const calendarDays = generateCalendarDays(year, month);
-  const startDay = getStartDayOfMonth(year, month);
-  const prevMonthDays = getPreviousMonthDays(year, month, startDay);
-  const nextMonthDays = getNextMonthDays(year, month, startDay, calendarDays);
-
-  const getEnglishDateForNepali = (
-    year: number,
-    month: number,
-    day: number
-  ): string => {
-    return getEnglishDate(year, month, day);
-  };
-
   const handleThemeToggle = () => {
     setDarkMode(!darkMode);
-  };
-
-  // Get the Georgian months for the current Nepali month
-  const getGeorgianMonthRange = (
-    nepaliYear: number,
-    nepaliMonth: number
-  ): string => {
-    // Get first day of the month
-    const firstDayAD = getEnglishDate(nepaliYear, nepaliMonth, 1);
-    // Get last day of the month
-    const lastDayAD = getEnglishDate(
-      nepaliYear,
-      nepaliMonth,
-      getNepaliMonthDays(nepaliYear, nepaliMonth)
-    );
-
-    const [, firstMonth] = firstDayAD.split(' ');
-    const [, lastMonth] = lastDayAD.split(' ');
-
-    return firstMonth === lastMonth ? firstMonth : `${firstMonth}/${lastMonth}`;
   };
 
   const renderCalendarDay = (
@@ -309,7 +261,7 @@ const NepaliCalendar: React.FC = () => {
     year: number,
     isCurrentMonth: boolean = true
   ) => {
-    const englishDate = getEnglishDateForNepali(year, month, day);
+    const englishDate = getEnglishDate(year, month, day);
     const dateObj = new Date(englishDate);
     const englishDay = dateObj.getDate();
     const holiday = getNepaliHoliday(year, month, day);
@@ -405,313 +357,197 @@ const NepaliCalendar: React.FC = () => {
     );
   };
 
+  const calendarDays = generateCalendarDays(year, month);
+  const startDay = getStartDayOfMonth(year, month);
+  const prevMonthDays = getPreviousMonthDays(year, month, startDay);
+  const nextMonthDays = getNextMonthDays(year, month, startDay, calendarDays);
+
   return (
-    <ThemeProvider theme={theme}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        bgcolor: 'background.default',
+      }}
+    >
+      <Header darkMode={darkMode} onThemeToggle={handleThemeToggle} />
+
       <Box
         sx={{
-          minHeight: '100vh',
-          height: '100vh',
-          bgcolor: 'background.default',
-          pt: '64px',
-          pb: { xs: '56px', md: 0 },
-          overflow: 'hidden',
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          p: { xs: 1, sm: 2, md: 3 },
+          gap: 2,
         }}
       >
-        <Header darkMode={darkMode} onThemeToggle={handleThemeToggle} />
-
         <Box
           sx={{
-            width: '100%',
-            mx: 'auto',
-            p: { xs: 1, sm: 2 },
-            flex: 1,
-            overflow: 'hidden',
-            display: 'flex',
-            flexDirection: 'column',
-            minHeight: 0,
+            display:
+              !isMobileOrTablet || mobileView === 'calendar' ? 'block' : 'none',
           }}
         >
           <Box
             sx={{
               display: 'flex',
+              flexDirection: { xs: 'column', sm: 'row' },
               gap: 2,
-              flexDirection: { xs: 'column', md: 'row' },
-              overflow: 'hidden',
-              height: '100%',
-              minHeight: 0,
+              mb: 2,
             }}
           >
-            {/* Calendar View */}
-            <Paper
-              elevation={3}
-              sx={{
-                p: { xs: 1, sm: 2 },
-                borderRadius: 2,
-                bgcolor: 'background.paper',
-                flex: 1,
-                flexDirection: 'column',
-                overflow: 'hidden',
-                display: {
-                  xs: mobileView === 'calendar' ? 'flex' : 'none',
-                  md: 'flex',
-                },
-                position: 'relative',
-                height: '100%',
-              }}
-            >
-              {/* Controls section */}
-              <Box
-                sx={{
-                  mb: { xs: 1, sm: 2 },
-                  flexShrink: 0,
-                }}
+            <FormControl size='small' fullWidth>
+              <InputLabel id='year-select-label'>
+                {t('calendar.selectYear')}
+              </InputLabel>
+              <Select
+                labelId='year-select-label'
+                value={year}
+                label={t('calendar.selectYear')}
+                onChange={(e) => setYear(Number(e.target.value))}
               >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', sm: 'row' },
-                    gap: { xs: 1, sm: 2 },
-                    alignItems: { xs: 'stretch', sm: 'center' },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: 1,
-                      flexWrap: 'nowrap',
-                      minWidth: { xs: '100%', sm: 'auto' },
-                    }}
-                  >
-                    <FormControl
-                      size='small'
-                      sx={{ width: { xs: '50%', sm: 120 } }}
-                    >
-                      <InputLabel>{t('calendar.selectYear')}</InputLabel>
-                      <Select
-                        value={year}
-                        label={t('calendar.selectYear')}
-                        onChange={(e) => setYear(Number(e.target.value))}
-                      >
-                        {years.map((y) => (
-                          <MenuItem key={y} value={y}>
-                            {y}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-
-                    <FormControl
-                      size='small'
-                      sx={{ width: { xs: '50%', sm: 120 } }}
-                    >
-                      <InputLabel>{t('calendar.selectMonth')}</InputLabel>
-                      <Select
-                        value={month}
-                        label={t('calendar.selectMonth')}
-                        onChange={(e) => setMonth(Number(e.target.value))}
-                      >
-                        {months.map((m) => (
-                          <MenuItem key={m} value={m}>
-                            {getNepaliMonthName(m, i18n.language)}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  </Box>
-
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      flex: 1,
-                      justifyContent: 'center',
-                      bgcolor: 'background.paper',
-                      p: { xs: 1, sm: 1.5 },
-                      borderRadius: 1,
-                      boxShadow: 1,
-                    }}
-                  >
-                    <CalendarTodayIcon color='primary' fontSize='small' />
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        flexDirection: { xs: 'column', sm: 'row' },
-                        alignItems: { xs: 'center', sm: 'baseline' },
-                        gap: { xs: 0.5, sm: 2 },
-                        width: '100%',
-                        justifyContent: 'center',
-                      }}
-                    >
-                      <Typography
-                        variant='body2'
-                        color='text.primary'
-                        sx={{
-                          fontSize: { xs: '0.875rem', sm: '1rem' },
-                          fontWeight: 'medium',
-                        }}
-                      >
-                        {convertToNepaliNumber(getCurrentNepaliDate().day)}{' '}
-                        {getNepaliMonthName(
-                          getCurrentNepaliDate().month,
-                          i18n.language
-                        )}{' '}
-                        {convertToNepaliNumber(getCurrentNepaliDate().year)}
-                      </Typography>
-                      <Typography
-                        variant='body2'
-                        color='text.secondary'
-                        sx={{
-                          fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 0.5,
-                        }}
-                      >
-                        <Box
-                          component='span'
-                          sx={{
-                            width: '4px',
-                            height: '4px',
-                            bgcolor: 'text.secondary',
-                            borderRadius: '50%',
-                            display: { xs: 'none', sm: 'block' },
-                          }}
-                        />
-                        {getEnglishDateForNepali(
-                          getCurrentNepaliDate().year,
-                          getCurrentNepaliDate().month,
-                          getCurrentNepaliDate().day
-                        )}
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              </Box>
-
-              {/* Calendar Grid */}
-              <Box
-                sx={{
-                  'display': 'grid',
-                  'gridTemplateColumns': 'repeat(7, 1fr)',
-                  'gap': { xs: 0.5, sm: 1, md: 1.5 },
-                  'gridTemplateRows': 'auto repeat(6, 1fr)',
-                  'flex': 1,
-                  'overflow': 'auto',
-                  'minHeight': 0,
-                  'px': { xs: 0.5, sm: 1 },
-                  'pb': { xs: 0.5, sm: 1 },
-                  '& > *': {
-                    minHeight: 0,
-                  },
-                }}
-              >
-                {/* Weekday headers */}
-                {Array.from({ length: 7 }, (_, i) => (
-                  <Paper
-                    key={`weekday-${i}`}
-                    elevation={1}
-                    sx={{
-                      p: { xs: 0.25, sm: 1, md: 1.5 },
-                      textAlign: 'center',
-                      bgcolor: 'primary.main',
-                      color: 'primary.contrastText',
-                      fontWeight: 'bold',
-                      borderRadius: 1,
-                      fontSize: {
-                        xs: '0.7rem',
-                        sm: '0.8rem',
-                        md: '0.875rem',
-                      },
-                      position: 'sticky',
-                      top: 0,
-                      zIndex: 1,
-                      whiteSpace: 'nowrap',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      height: { xs: '24px', sm: '32px', md: '36px' },
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    {getWeekDayName(i, i18n.language)}
-                  </Paper>
+                {years.map((y) => (
+                  <MenuItem key={y} value={y}>
+                    {convertToNepaliNumber(y)}
+                  </MenuItem>
                 ))}
+              </Select>
+            </FormControl>
 
-                {/* Calendar days */}
-                {prevMonthDays.map(({ day, month, year }) =>
-                  renderCalendarDay(day, month, year, false)
-                )}
-                {calendarDays.map((day) => renderCalendarDay(day, month, year))}
-                {nextMonthDays.map(({ day, month, year }) =>
-                  renderCalendarDay(day, month, year, false)
-                )}
-              </Box>
-            </Paper>
+            <FormControl size='small' fullWidth>
+              <InputLabel id='month-select-label'>
+                {t('calendar.selectMonth')}
+              </InputLabel>
+              <Select
+                labelId='month-select-label'
+                value={month}
+                label={t('calendar.selectMonth')}
+                onChange={(e) => setMonth(Number(e.target.value))}
+              >
+                {months.map((m) => (
+                  <MenuItem key={m} value={m}>
+                    {getNepaliMonthName(m, i18n.language)}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-            {/* Holiday List */}
             <Box
               sx={{
-                width: { xs: '100%', md: '300px' },
-                flexShrink: 0,
-                display: {
-                  xs: mobileView === 'holidays' ? 'block' : 'none',
-                  md: 'block',
-                },
-                overflow: 'hidden',
-                height: '100%',
+                display: 'flex',
+                gap: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <HolidayList year={year} currentMonth={month} />
+              <IconButton
+                onClick={handlePrevMonth}
+                size='small'
+                sx={{ bgcolor: 'action.hover' }}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+              <IconButton
+                onClick={handleNextMonth}
+                size='small'
+                sx={{ bgcolor: 'action.hover' }}
+              >
+                <ArrowForwardIcon />
+              </IconButton>
             </Box>
           </Box>
-        </Box>
 
-        {/* Bottom Navigation for Mobile/Tablet */}
-        {isMobileOrTablet && (
           <Paper
-            sx={{
-              position: 'fixed',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              zIndex: 1100,
-              borderRadius: 0,
-              borderTop: 1,
-              borderColor: 'divider',
-              bgcolor: 'background.paper',
-            }}
             elevation={3}
+            sx={{
+              p: { xs: 1, sm: 2 },
+              borderRadius: 2,
+              bgcolor: 'background.paper',
+              overflow: 'hidden',
+            }}
           >
-            <BottomNavigation
-              value={mobileView}
-              onChange={(_, newValue) => setMobileView(newValue)}
-              showLabels
+            <Box
               sx={{
-                'height': 56,
-                '& .MuiBottomNavigationAction-root': {
-                  py: 1,
-                },
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: { xs: 0.5, sm: 1 },
+                mb: { xs: 0.5, sm: 1 },
               }}
             >
-              <BottomNavigationAction
-                label={t('calendar.view')}
-                value='calendar'
-                icon={<CalendarTodayIcon />}
-              />
-              <BottomNavigationAction
-                label={t('calendar.holidays')}
-                value='holidays'
-                icon={<EventIcon />}
-              />
-            </BottomNavigation>
+              {Array.from({ length: 7 }, (_, i) => (
+                <Typography
+                  key={i}
+                  variant='subtitle2'
+                  align='center'
+                  sx={{
+                    color: i === 6 ? 'error.main' : 'text.primary',
+                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                    fontWeight: 'medium',
+                  }}
+                >
+                  {getWeekDayName(i, i18n.language)}
+                </Typography>
+              ))}
+            </Box>
+
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(7, 1fr)',
+                gap: { xs: 0.5, sm: 1 },
+                gridTemplateRows: 'repeat(6, 1fr)',
+              }}
+            >
+              {prevMonthDays.map((date) =>
+                renderCalendarDay(date.day, date.month, date.year, false)
+              )}
+              {calendarDays.map((day) => renderCalendarDay(day, month, year))}
+              {nextMonthDays.map((date) =>
+                renderCalendarDay(date.day, date.month, date.year, false)
+              )}
+            </Box>
           </Paper>
-        )}
+        </Box>
+
+        <Box
+          sx={{
+            display:
+              !isMobileOrTablet || mobileView === 'holidays' ? 'block' : 'none',
+            flex: 1,
+          }}
+        >
+          <HolidayList year={year} currentMonth={month} />
+        </Box>
       </Box>
-    </ThemeProvider>
+
+      {isMobileOrTablet && (
+        <Paper
+          sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+          elevation={3}
+        >
+          <BottomNavigation
+            value={mobileView}
+            onChange={(_, newValue) => setMobileView(newValue)}
+            sx={{
+              height: 56,
+              borderTop: 1,
+              borderColor: 'divider',
+            }}
+          >
+            <BottomNavigationAction
+              label={t('calendar.view')}
+              value='calendar'
+              icon={<CalendarTodayIcon />}
+            />
+            <BottomNavigationAction
+              label={t('calendar.holidays')}
+              value='holidays'
+              icon={<EventIcon />}
+            />
+          </BottomNavigation>
+        </Paper>
+      )}
+    </Box>
   );
 };
 

@@ -45,24 +45,52 @@ export const nepaliCalendarData: { [key: number]: number[] } = {
   2082: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
   2083: [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
   2084: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
-  2085: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
-  2086: [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
-  2087: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
-  2088: [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30],
-  2089: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
-  2090: [31, 31, 31, 32, 31, 31, 30, 29, 30, 29, 30, 30],
+  2085: [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  2086: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
+  2087: [31, 31, 31, 32, 31, 31, 29, 30, 30, 29, 30, 30],
+  2088: [31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
+  2089: [31, 32, 31, 32, 31, 30, 30, 29, 30, 29, 30, 30],
+  2090: [31, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
 };
 
-// Base Nepali date for conversion (2040-01-01 BS = 1983-04-14 AD)
-const BASE_NEPALI_YEAR = 2040;
-const BASE_NEPALI_MONTH = 1;
-const BASE_NEPALI_DAY = 1;
-const BASE_GREGORIAN_DATE = new Date(1983, 3, 14); // Month is 0-based in JS Date
-
-const nepaliHolidays: { [key: string]: string } = {
-  '2082-2-7': 'Buddha Jayanti',
-  '2082-2-15': 'Republic Day',
-  // Add more holidays as needed
+const nepaliHolidays: {
+  [key: number]: { [key: number]: { [key: number]: string } };
+} = {
+  2080: {
+    1: {
+      1: 'New Year',
+      11: 'Janak Jayanti',
+      14: 'Ram Navami',
+    },
+    2: {
+      3: 'Akshaya Tritiya',
+      7: 'Buddha Jayanti',
+      15: 'Republic Day',
+    },
+    3: {
+      15: 'Guru Purnima',
+    },
+  },
+  2081: {
+    1: {
+      1: 'New Year',
+      11: 'Janak Jayanti',
+      14: 'Ram Navami',
+    },
+    2: {
+      7: 'Buddha Jayanti',
+      15: 'Republic Day',
+    },
+  },
+  2082: {
+    1: {
+      1: 'New Year',
+    },
+    2: {
+      7: 'Buddha Jayanti',
+      15: 'Republic Day',
+    },
+  },
 };
 
 export const getNepaliMonthDays = (year: number, month: number): number => {
@@ -141,13 +169,13 @@ export const getCurrentNepaliDate = (): {
   day: number;
 } => {
   const today = new Date();
-  const diffTime = Math.abs(today.getTime() - BASE_GREGORIAN_DATE.getTime());
+  const diffTime = Math.abs(today.getTime() - new Date(1983, 3, 14).getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   let remainingDays = diffDays;
-  let nepaliYear = BASE_NEPALI_YEAR;
-  let nepaliMonth = BASE_NEPALI_MONTH;
-  let nepaliDay = BASE_NEPALI_DAY;
+  let nepaliYear = 2040;
+  let nepaliMonth = 1;
+  let nepaliDay = 1;
 
   while (remainingDays > 0) {
     const daysInMonth = getNepaliMonthDays(nepaliYear, nepaliMonth);
@@ -167,42 +195,20 @@ export const getCurrentNepaliDate = (): {
   return { year: nepaliYear, month: nepaliMonth, day: nepaliDay };
 };
 
-export const getAllHolidays = (year: number) => {
-  // Note: year parameter is kept for future use when holiday data might vary by year
-  const holidays: { [key: string]: { [key: string]: string } } = {
-    '1': {
-      '1': 'New Year',
-      '11': 'Nepali New Year',
-      '14': 'Baisakh Sankranti',
-    },
-    '2': { '15': 'Buddha Jayanti', '30': 'Ganatantra Diwas' },
-    '3': { '15': 'Ashadh Sankranti', '29': 'National Paddy Day' },
-    '4': { '15': 'Shrawan Sankranti', '20': 'Nag Panchami' },
-    '5': {
-      '15': 'Janai Purnima',
-      '21': 'Gaura Parba',
-      '23': 'Krishna Janmashtami',
-    },
-    '6': { '15': 'Teej', '20': 'Rishi Panchami', '27': 'Indra Jatra' },
-    '7': {
-      '2': 'Ghatasthapana',
-      '7': 'Fulpati',
-      '8': 'Maha Astami',
-      '9': 'Maha Nawami',
-      '10': 'Vijaya Dashami',
-      '15': 'Kojagrat Purnima',
-    },
-    '8': {
-      '15': 'Laxmi Puja',
-      '17': 'Mha Puja',
-      '18': 'Nepal Sambat New Year',
-    },
-    '9': { '14': "Children's Day", '15': 'Constitution Day' },
-    '10': { '15': 'Poush Sankranti', '30': 'Tamu Lhosar' },
-    '11': { '15': 'Maghe Sankranti', '30': 'Sonam Lhosar' },
-    '12': { '15': 'Fagu Purnima', '24': 'Ghode Jatra' },
-  };
-  return holidays;
+export const getAllHolidays = (
+  year: number
+): { [key: string]: { [key: string]: string } } => {
+  const yearHolidays = nepaliHolidays[year] || {};
+  const result: { [key: string]: { [key: string]: string } } = {};
+
+  for (const month in yearHolidays) {
+    result[month] = {};
+    for (const day in yearHolidays[month]) {
+      result[month][day] = yearHolidays[month][day];
+    }
+  }
+
+  return result;
 };
 
 export const getNepaliHoliday = (
@@ -210,22 +216,15 @@ export const getNepaliHoliday = (
   month: number,
   day: number
 ): string | null => {
-  const holidays = getAllHolidays(year);
-  const monthStr = month.toString();
-  const dayStr = day.toString();
-  return holidays[monthStr]?.[dayStr] || null;
+  return nepaliHolidays[year]?.[month]?.[day] || null;
 };
 
 export const getStartDayOfMonth = (year: number, month: number): number => {
-  const baseNepaliYear = 2040;
-  const baseNepaliMonth = 1; // Baisakh
-  const baseNepaliDay = 1;
   const baseWeekDay = 3; // Wednesday (2040-01-01 BS was a Wednesday)
-
   let totalDays = 0;
 
   // Calculate total days from base year to the given year
-  for (let y = baseNepaliYear; y < year; y++) {
+  for (let y = 2040; y < year; y++) {
     for (let m = 1; m <= 12; m++) {
       totalDays += getNepaliMonthDays(y, m);
     }
