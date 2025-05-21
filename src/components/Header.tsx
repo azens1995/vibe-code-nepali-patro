@@ -6,22 +6,91 @@ import {
   Typography,
   Toolbar,
   useTheme,
+  Switch,
+  FormControlLabel,
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { styled } from '@mui/material/styles';
 
 interface HeaderProps {
   darkMode: boolean;
   onThemeToggle: () => void;
 }
 
+// Custom styled switch for language toggle
+const LanguageSwitch = styled(Switch)(({ theme }) => ({
+  'width': 62,
+  'height': 34,
+  'padding': 7,
+  '& .MuiSwitch-switchBase': {
+    'margin': 1,
+    'padding': 0,
+    'transform': 'translateX(6px)',
+    '&.Mui-checked': {
+      'color': '#fff',
+      'transform': 'translateX(22px)',
+      '& .MuiSwitch-thumb:before': {
+        content: "'🇳🇵'",
+      },
+      '& + .MuiSwitch-track': {
+        opacity: 1,
+        backgroundColor:
+          theme.palette.mode === 'dark'
+            ? theme.palette.primary.dark
+            : theme.palette.primary.main,
+      },
+    },
+  },
+  '& .MuiSwitch-thumb': {
+    'backgroundColor':
+      theme.palette.mode === 'dark'
+        ? theme.palette.grey[200]
+        : theme.palette.grey[50],
+    'width': 32,
+    'height': 32,
+    'boxShadow':
+      theme.palette.mode === 'dark'
+        ? '0 2px 4px 0 rgba(0,0,0,0.2)'
+        : '0 2px 4px 0 rgba(0,0,0,0.1)',
+    '&:before': {
+      content: "'🇬🇧'",
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      left: 0,
+      top: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 16,
+    },
+  },
+  '& .MuiSwitch-track': {
+    'opacity': 1,
+    'backgroundColor':
+      theme.palette.mode === 'dark'
+        ? theme.palette.grey[800]
+        : theme.palette.grey[300],
+    'borderRadius': 20 / 2,
+    '&:before, &:after': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      width: 16,
+      height: 16,
+    },
+  },
+}));
+
 const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
 
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    i18n.changeLanguage(event.target.checked ? 'ne' : 'en');
   };
 
   return (
@@ -48,27 +117,30 @@ const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
         </Typography>
 
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Button
-            variant={i18n.language === 'en' ? 'contained' : 'outlined'}
-            onClick={() => handleLanguageChange('en')}
-            size='small'
-          >
-            English
-          </Button>
-          <Button
-            variant={i18n.language === 'ne' ? 'contained' : 'outlined'}
-            onClick={() => handleLanguageChange('ne')}
-            size='small'
-          >
-            नेपाली
-          </Button>
+          <FormControlLabel
+            control={
+              <LanguageSwitch
+                checked={i18n.language === 'ne'}
+                onChange={handleLanguageChange}
+              />
+            }
+            label=''
+          />
           <Button
             onClick={onThemeToggle}
-            variant='outlined'
+            variant='text'
             size='small'
-            startIcon={darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+            sx={{
+              'minWidth': 'auto',
+              'p': 1,
+              'borderRadius': '50%',
+              'color': 'text.secondary',
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            }}
           >
-            {darkMode ? t('theme.light') : t('theme.dark')}
+            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
           </Button>
         </Box>
       </Toolbar>
