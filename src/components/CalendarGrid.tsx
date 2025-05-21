@@ -65,13 +65,21 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
           'justifyContent': 'center',
           'cursor': isCurrentMonth ? 'pointer' : 'default',
           'opacity': isCurrentMonth ? 1 : 0.3,
-          'bgcolor': isToday ? 'primary.main' : 'transparent',
+          'bgcolor': isToday
+            ? 'primary.main'
+            : isSelected
+            ? theme.palette.mode === 'light'
+              ? 'primary.light'
+              : 'primary.dark'
+            : 'transparent',
           'borderRadius': '50%',
           'margin': 'auto',
           'color': !isCurrentMonth
             ? 'text.disabled'
             : isToday || isSelected
-            ? '#fff'
+            ? theme.palette.mode === 'light' && !isToday
+              ? 'primary.main'
+              : '#fff'
             : 'text.primary',
           '& .MuiTypography-root': {
             position: 'relative',
@@ -83,12 +91,15 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                 ? 'action.hover'
                 : isToday
                 ? 'primary.dark'
+                : isSelected
+                ? theme.palette.mode === 'light'
+                  ? 'primary.main'
+                  : 'primary.light'
                 : undefined,
+            color: !isSelected && !isToday ? undefined : '#fff',
           },
           ...(isSelected && {
-            bgcolor: 'background.paper',
-            border: '2px solid',
-            borderColor: 'primary.main',
+            boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
           }),
           ...(isToday && {
             '&:hover': {
@@ -136,13 +147,13 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             variant='caption'
             sx={{
               fontSize: { xs: '0.625rem', sm: '0.75rem' },
-              color: isSelected ? 'inherit' : 'text.secondary',
+              color: 'inherit',
               lineHeight: 1,
               position: 'absolute',
               bottom: { xs: -1, sm: -1 },
               right: { xs: -6, sm: -8 },
               zIndex: 1,
-              opacity: 0.7,
+              opacity: 0.8,
               transform: 'scale(0.85)',
               transformOrigin: 'bottom right',
               bgcolor: 'transparent',
