@@ -1,21 +1,41 @@
 {
-  "name": "थारु पात्रो | Tharu Patra",
-  "short_name": "थारु पात्रो",
-  "description": "A Beautiful Nepali Calendar",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2196f3",
+  "short_name": "Nepali Calendar",
+  "name": "Nepali Calendar with Holidays",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "32x32",
-      "type": "image/svg+xml"
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
     },
     {
-      "src": "/tharu-patra.svg",
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "type": "image/svg+xml"
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1976d2",
+  "background_color": "#ffffff",
+  "orientation": "portrait",
+  "categories": ["utilities", "productivity"],
+  "description": "A comprehensive Nepali Calendar with holidays and events",
+  "lang": "ne",
+  "dir": "ltr",
+  "prefer_related_applications": false,
+  "scope": "/",
+  "shortcuts": [
+    {
+      "name": "Today",
+      "url": "/?today=true",
+      "description": "View today's date"
     }
   ]
 }
