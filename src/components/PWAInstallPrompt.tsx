@@ -102,14 +102,17 @@ export default function PWAInstallPrompt() {
       <Box
         sx={{
           'position': 'fixed',
-          'bottom': 0,
+          'bottom': {
+            xs: 'var(--bottom-navigation-height, 56px)', // Account for bottom navigation
+            sm: '20px',
+          },
           'left': 0,
           'right': 0,
           'padding': 2,
           'bgcolor': 'background.paper',
           'borderTop': '1px solid',
           'borderColor': 'divider',
-          'zIndex': 1000,
+          'zIndex': 1200, // Increased z-index to appear above bottom navigation
           'display': 'flex',
           'flexDirection': 'column',
           'gap': 1,
