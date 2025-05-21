@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 import { useTheme as useMuiTheme } from '@mui/material/styles';
-import { getWeekDayName } from '../utils/nepaliCalendar';
+import { getWeekDayName, getNepaliHoliday } from '../utils/nepaliCalendar';
 import { getEnglishDate } from '../utils/dateConversion';
 import { convertToNepaliNumber } from '../utils/numberConverter';
 
@@ -44,6 +44,9 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
     const dateObj = new Date(englishDate);
     const englishDay = dateObj.getDate();
     const isSelected = isCurrentMonth && selectedDay === day;
+    const isSaturday = dateObj.getDay() === 6; // 6 represents Saturday
+    const isHoliday =
+      isCurrentMonth && getNepaliHoliday(year, month, day) !== null;
 
     const isToday =
       currentDate.year === year &&
@@ -80,6 +83,8 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
             ? theme.palette.mode === 'light' && !isToday
               ? 'primary.main'
               : '#fff'
+            : isHoliday || isSaturday
+            ? 'error.main'
             : 'text.primary',
           '& .MuiTypography-root': {
             position: 'relative',
@@ -96,7 +101,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
                   ? 'primary.main'
                   : 'primary.light'
                 : undefined,
-            color: !isSelected && !isToday ? undefined : '#fff',
+            color:
+              !isSelected && !isToday
+                ? (isHoliday || isSaturday) && isCurrentMonth
+                  ? 'error.main'
+                  : undefined
+                : '#fff',
           },
           ...(isSelected && {
             boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
@@ -134,7 +144,12 @@ const CalendarGrid: React.FC<CalendarGridProps> = ({
           <Typography
             variant='body2'
             sx={{
-              fontWeight: isSelected || isToday ? 'bold' : 'normal',
+              fontWeight:
+                isSelected || isToday
+                  ? 'bold'
+                  : isHoliday || isSaturday
+                  ? 500
+                  : 'normal',
               fontSize: { xs: '0.875rem', sm: '1rem' },
               lineHeight: 1,
               color: 'inherit',
