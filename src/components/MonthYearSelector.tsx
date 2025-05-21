@@ -17,23 +17,24 @@ import {
 } from '../utils/nepaliCalendar';
 import { convertToNepaliNumber } from '../utils/numberConverter';
 import { getEnglishADDate } from '../utils/dateConversion';
+import { useTranslation } from 'react-i18next';
 
 interface MonthYearSelectorProps {
   year: number;
   month: number;
   years: number[];
   months: number[];
+  onYearChange: (year: number) => void;
+  onMonthChange: (month: number) => void;
+  onNextMonth: () => void;
+  onPrevMonth: () => void;
+  onToday: () => void;
+  language: string;
   currentDate: {
     year: number;
     month: number;
     day: number;
   };
-  onYearChange: (year: number) => void;
-  onMonthChange: (month: number) => void;
-  onNext: () => void;
-  onPrev: () => void;
-  language: string;
-  t: (key: string) => string;
 }
 
 const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
@@ -41,14 +42,16 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
   month,
   years,
   months,
-  currentDate,
   onYearChange,
   onMonthChange,
-  onNext,
-  onPrev,
+  onNextMonth,
+  onPrevMonth,
+  onToday,
   language,
-  t,
+  currentDate,
 }) => {
+  const { t } = useTranslation();
+
   // Get English month names for current and next month
   const getEnglishMonthDisplay = () => {
     const firstDayOfMonth = getEnglishADDate(year, month, 1);
@@ -260,7 +263,7 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
           display: 'flex',
           gap: 1,
           alignItems: 'center',
-          justifyContent: { xs: 'flex-end', sm: 'flex-end' },
+          justifyContent: { xs: 'space-between', sm: 'flex-end' },
           flex: { xs: '0 0 auto', sm: '0 1 auto' },
           mt: { xs: 1, sm: 0 },
           width: { xs: '100%', sm: 'auto' },
@@ -269,42 +272,73 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
           pt: { xs: 1, sm: 0 },
         }}
       >
-        <Typography
-          variant='body2'
+        <Box
           sx={{
-            color: 'text.secondary',
-            mr: 2,
-            minWidth: 120,
-            textAlign: 'right',
-            display: { xs: 'none', sm: 'block' },
+            display: { xs: 'flex', sm: 'none' },
+            alignItems: 'center',
+            gap: 1,
           }}
         >
-          {getEnglishMonthDisplay()}
-        </Typography>
-        <IconButton
-          onClick={onPrev}
-          size='small'
+          <Typography
+            variant='caption'
+            sx={{
+              color: 'text.secondary',
+              fontWeight: 500,
+            }}
+          >
+            {`${convertToNepaliNumber(currentDate.day)} ${getNepaliMonthName(
+              currentDate.month,
+              language
+            )}`}
+          </Typography>
+        </Box>
+
+        <Box
           sx={{
-            'bgcolor': 'action.hover',
-            '&:hover': {
-              bgcolor: 'action.selected',
-            },
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1,
           }}
         >
-          <ArrowBackIcon />
-        </IconButton>
-        <IconButton
-          onClick={onNext}
-          size='small'
-          sx={{
-            'bgcolor': 'action.hover',
-            '&:hover': {
-              bgcolor: 'action.selected',
-            },
-          }}
-        >
-          <ArrowForwardIcon />
-        </IconButton>
+          <IconButton
+            onClick={onPrevMonth}
+            size='small'
+            sx={{
+              'bgcolor': 'action.hover',
+              '&:hover': {
+                bgcolor: 'action.selected',
+              },
+            }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
+
+          <Typography
+            variant='caption'
+            sx={{
+              color: 'text.secondary',
+              display: { xs: 'block', sm: 'none' },
+              fontWeight: 500,
+              minWidth: 100,
+              textAlign: 'center',
+            }}
+          >
+            {getEnglishMonthDisplay()}
+          </Typography>
+
+          <IconButton
+            onClick={onNextMonth}
+            size='small'
+            sx={{
+              'bgcolor': 'action.hover',
+              '&:hover': {
+                bgcolor: 'action.selected',
+              },
+            }}
+          >
+            <ArrowForwardIcon />
+          </IconButton>
+        </Box>
       </Box>
     </Box>
   );

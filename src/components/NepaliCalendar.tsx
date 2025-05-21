@@ -22,6 +22,7 @@ import Header from './Header';
 import HolidayList from './HolidayList';
 import CalendarGrid from './CalendarGrid';
 import MonthYearSelector from './MonthYearSelector';
+import { useSwipeable } from 'react-swipeable';
 
 interface NepaliCalendarProps {
   onThemeChange: () => void;
@@ -103,10 +104,10 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
     year: number,
     month: number,
     startDay: number,
-    currentMonthDays: number[]
+    daysInMonth: number
   ) => {
     const totalCells = 42; // 6 rows * 7 days
-    const remainingCells = totalCells - (startDay + currentMonthDays.length);
+    const remainingCells = totalCells - (startDay + daysInMonth);
     if (remainingCells <= 0) return [];
 
     const nextMonth = month === 12 ? 1 : month + 1;
@@ -118,116 +119,132 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
     }));
   };
 
-  const calendarDays = generateCalendarDays(year, month);
+  // Add swipe handlers
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => handleNextMonth(),
+    onSwipedRight: () => handlePrevMonth(),
+    preventScrollOnSwipe: true,
+    trackMouse: false,
+  });
+
+  // Calculate calendar days
   const startDay = getStartDayOfMonth(year, month);
+  const currentMonthDays = generateCalendarDays(year, month);
   const prevMonthDays = getPreviousMonthDays(year, month, startDay);
-  const nextMonthDays = getNextMonthDays(year, month, startDay, calendarDays);
+  const nextMonthDays = getNextMonthDays(
+    year,
+    month,
+    startDay,
+    currentMonthDays.length
+  );
 
   return (
     <Box
       sx={{
         height: '100vh',
+        width: '100vw',
+        overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: 'background.default',
-        overflow: 'hidden',
       }}
     >
-      <Header darkMode={isDarkMode} onThemeToggle={onThemeChange} />
+      <Header onThemeChange={onThemeChange} isDarkMode={isDarkMode} />
 
       <Box
         sx={{
           flex: 1,
           display: 'flex',
-          flexDirection: 'column',
-          p: { xs: 1, sm: 2, md: 3 },
           gap: 2,
-          mt: { xs: 7, sm: 8 },
+          p: { xs: 1, md: 2 },
           overflow: 'hidden',
-          maxWidth: '1800px',
-          width: '100%',
-          mx: 'auto',
+          mt: { xs: '56px', sm: '64px' },
+          pb: { xs: '56px', sm: 0 },
         }}
       >
         <Box
+          {...swipeHandlers}
           sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', md: 'row' },
+            display:
+              !isMobileOrTablet || mobileView === 'calendar' ? 'flex' : 'none',
+            flex: 1,
+            flexDirection: 'column',
             gap: 2,
-            height: '100%',
             overflow: 'hidden',
-            width: '100%',
+            touchAction: 'pan-y pinch-zoom',
           }}
         >
-          <Box
+          <Paper
+            elevation={3}
             sx={{
-              display:
-                !isMobileOrTablet || mobileView === 'calendar'
-                  ? 'flex'
-                  : 'none',
-              flex: { md: '1 1 auto' },
-              flexDirection: 'column',
-              height: '100%',
-              minHeight: 0,
-              maxWidth: { md: 'calc(100% - 420px)' },
+              p: { xs: 1.5, sm: 2 },
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'divider',
             }}
           >
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: { xs: 2, sm: 2 },
-                mb: { xs: 1, sm: 2 },
-                flexShrink: 0,
+            <MonthYearSelector
+              year={year}
+              month={month}
+              years={years}
+              months={months}
+              onYearChange={(newYear) => setYear(newYear)}
+              onMonthChange={(newMonth) => setMonth(newMonth)}
+              onNextMonth={handleNextMonth}
+              onPrevMonth={handlePrevMonth}
+              onToday={() => {
+                setYear(currentDate.year);
+                setMonth(currentDate.month);
+                setSelectedDay(currentDate.day);
               }}
-            >
-              <MonthYearSelector
-                year={year}
-                month={month}
-                years={years}
-                months={months}
-                currentDate={currentDate}
-                onYearChange={setYear}
-                onMonthChange={setMonth}
-                onNext={handleNextMonth}
-                onPrev={handlePrevMonth}
-                language={i18n.language}
-                t={t}
-              />
-            </Box>
+              language={i18n.language}
+              currentDate={currentDate}
+            />
+          </Paper>
 
+          <Paper
+            elevation={3}
+            sx={{
+              flex: 1,
+              borderRadius: 2,
+              border: '1px solid',
+              borderColor: 'divider',
+              minHeight: 0,
+              overflow: 'hidden',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             <CalendarGrid
               year={year}
               month={month}
               selectedDay={selectedDay}
               prevMonthDays={prevMonthDays}
-              currentMonthDays={calendarDays}
+              currentMonthDays={currentMonthDays}
               nextMonthDays={nextMonthDays}
               onDaySelect={setSelectedDay}
               currentDate={currentDate}
               language={i18n.language}
             />
-          </Box>
+          </Paper>
+        </Box>
 
-          <Box
-            sx={{
-              display:
-                !isMobileOrTablet || mobileView === 'holidays'
-                  ? 'flex'
-                  : 'none',
-              flex: { md: '0 0 350px', lg: '0 0 400px', xl: '0 0 450px' },
-              height: '100%',
-              minHeight: 0,
-              maxWidth: { md: '350px', lg: '400px', xl: '450px' },
-              width: '100%',
-            }}
-          >
-            <HolidayList
-              year={year}
-              currentMonth={month}
-              onDateSelect={handleDateSelect}
-            />
-          </Box>
+        <Box
+          sx={{
+            display:
+              !isMobileOrTablet || mobileView === 'holidays' ? 'flex' : 'none',
+            flex: { md: '0 0 350px', lg: '0 0 400px', xl: '0 0 450px' },
+            height: '100%',
+            minHeight: 0,
+            maxWidth: { md: '350px', lg: '400px', xl: '450px' },
+            width: '100%',
+          }}
+        >
+          <HolidayList
+            year={year}
+            currentMonth={month}
+            onDateSelect={handleDateSelect}
+          />
         </Box>
       </Box>
 
@@ -238,7 +255,7 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
             bottom: 0,
             left: 0,
             right: 0,
-            zIndex: 10,
+            zIndex: (theme) => theme.zIndex.appBar,
           }}
           elevation={3}
         >
@@ -250,6 +267,7 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
               borderTop: '1px solid',
               borderColor: 'divider',
               bgcolor: 'background.paper',
+              height: { xs: '56px', sm: '64px' },
             }}
           >
             <BottomNavigationAction

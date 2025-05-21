@@ -15,8 +15,8 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { styled } from '@mui/material/styles';
 
 interface HeaderProps {
-  darkMode: boolean;
-  onThemeToggle: () => void;
+  onThemeChange: () => void;
+  isDarkMode: boolean;
 }
 
 // Custom styled switch for language toggle
@@ -85,7 +85,7 @@ const LanguageSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
+const Header: React.FC<HeaderProps> = ({ onThemeChange, isDarkMode }) => {
   const { t, i18n } = useTranslation();
   const theme = useTheme();
 
@@ -101,9 +101,15 @@ const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
       sx={{
         bgcolor: theme.palette.background.paper,
         borderBottom: `1px solid ${theme.palette.divider}`,
+        zIndex: theme.zIndex.appBar,
       }}
     >
-      <Toolbar sx={{ justifyContent: 'space-between' }}>
+      <Toolbar
+        sx={{
+          justifyContent: 'space-between',
+          minHeight: { xs: 56, sm: 64 }, // Explicit height for different breakpoints
+        }}
+      >
         <Typography
           variant='h5'
           component='h1'
@@ -111,6 +117,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
           sx={{
             fontWeight: 600,
             letterSpacing: '0.5px',
+            fontSize: { xs: '1.25rem', sm: '1.5rem' }, // Smaller font on mobile
           }}
         >
           {t('calendar.title')}
@@ -127,7 +134,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
             label=''
           />
           <Button
-            onClick={onThemeToggle}
+            onClick={onThemeChange}
             variant='text'
             size='small'
             sx={{
@@ -140,7 +147,7 @@ const Header: React.FC<HeaderProps> = ({ darkMode, onThemeToggle }) => {
               },
             }}
           >
-            {darkMode ? <Brightness7Icon /> : <Brightness4Icon />}
+            {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
           </Button>
         </Box>
       </Toolbar>

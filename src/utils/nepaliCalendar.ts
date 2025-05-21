@@ -307,3 +307,41 @@ export const getStartDayOfMonth = (year: number, month: number): number => {
   // Calculate the weekday
   return (baseWeekDay + totalDays) % 7;
 };
+
+export const getNextMonthDays = (
+  year: number,
+  month: number,
+  startDay: number,
+  daysInMonth: number
+): Array<{ day: number; month: number; year: number }> => {
+  const totalCells = 42; // 6 rows * 7 days
+  const remainingCells = totalCells - startDay - daysInMonth;
+  if (remainingCells <= 0) return [];
+
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+
+  return Array.from({ length: remainingCells }, (_, i) => ({
+    day: i + 1,
+    month: nextMonth,
+    year: nextYear,
+  }));
+};
+
+export const getPreviousMonthDays = (
+  year: number,
+  month: number,
+  startDay: number
+): Array<{ day: number; month: number; year: number }> => {
+  if (startDay === 0) return [];
+
+  const prevMonth = month === 1 ? 12 : month - 1;
+  const prevYear = month === 1 ? year - 1 : year;
+  const daysInPrevMonth = getNepaliMonthDays(prevYear, prevMonth);
+
+  return Array.from({ length: startDay }, (_, i) => ({
+    day: daysInPrevMonth - startDay + i + 1,
+    month: prevMonth,
+    year: prevYear,
+  }));
+};
