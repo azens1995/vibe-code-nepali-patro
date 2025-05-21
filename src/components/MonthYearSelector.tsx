@@ -46,6 +46,7 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
   onMonthChange,
   onNextMonth,
   onPrevMonth,
+  onToday,
   language,
   currentDate,
 }) => {
@@ -77,13 +78,40 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
     <Box
       sx={{
         display: 'flex',
-        flexDirection: { xs: 'column', sm: 'row' },
+        flexDirection: 'column',
         gap: { xs: 1, sm: 2 },
         mb: { xs: 1, sm: 2 },
         flexShrink: 0,
-        alignItems: 'center',
       }}
     >
+      {/* Current Date Display */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 1,
+          pb: 1,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
+        <CalendarTodayIcon sx={{ fontSize: '1rem', color: 'text.secondary' }} />
+        <Typography
+          variant='body2'
+          sx={{
+            color: 'text.secondary',
+            fontWeight: 500,
+          }}
+        >
+          {`${convertToNepaliNumber(currentDate.day)} ${getNepaliMonthName(
+            currentDate.month,
+            language
+          )} ${convertToNepaliNumber(currentDate.year)}`}
+        </Typography>
+      </Box>
+
+      {/* Year and Month Selectors */}
       <Box
         sx={{
           display: 'flex',
@@ -91,7 +119,7 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
           gap: { xs: 1, sm: 2 },
           flex: { xs: '1 1 auto', sm: '0 1 auto' },
           maxWidth: '100%',
-          width: { xs: '100%', sm: 'auto' },
+          width: '100%',
           justifyContent: { xs: 'space-between', sm: 'flex-start' },
         }}
       >
@@ -216,128 +244,55 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
         </FormControl>
       </Box>
 
-      <Typography
-        variant='h6'
-        sx={{
-          color: 'text.secondary',
-          display: { xs: 'none', sm: 'flex' },
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 1,
-          fontWeight: 500,
-          flex: 1,
-          textAlign: 'center',
-        }}
-      >
-        <CalendarTodayIcon fontSize='small' />
-        {`${convertToNepaliNumber(currentDate.day)} ${getNepaliMonthName(
-          currentDate.month,
-          language
-        )} ${convertToNepaliNumber(currentDate.year)}`}
-      </Typography>
-
-      <Typography
-        variant='h6'
-        sx={{
-          color: 'text.secondary',
-          display: { xs: 'flex', sm: 'none' },
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 1,
-          fontWeight: 500,
-          width: '100%',
-          mb: 1,
-          order: -1,
-        }}
-      >
-        <CalendarTodayIcon fontSize='small' />
-        {`${convertToNepaliNumber(currentDate.day)} ${getNepaliMonthName(
-          currentDate.month,
-          language
-        )} ${convertToNepaliNumber(currentDate.year)}`}
-      </Typography>
-
+      {/* Navigation Row */}
       <Box
         sx={{
           display: 'flex',
-          gap: 1,
           alignItems: 'center',
-          justifyContent: { xs: 'space-between', sm: 'flex-end' },
-          flex: { xs: '0 0 auto', sm: '0 1 auto' },
-          mt: { xs: 1, sm: 0 },
-          width: { xs: '100%', sm: 'auto' },
+          width: '100%',
+          justifyContent: 'space-between',
           borderTop: { xs: '1px solid', sm: 'none' },
           borderColor: 'divider',
           pt: { xs: 1, sm: 0 },
         }}
       >
-        <Box
+        <IconButton
+          onClick={onPrevMonth}
+          size='small'
           sx={{
-            display: { xs: 'flex', sm: 'none' },
-            alignItems: 'center',
-            gap: 1,
+            'bgcolor': 'action.hover',
+            '&:hover': {
+              bgcolor: 'action.selected',
+            },
           }}
         >
-          <Typography
-            variant='caption'
-            sx={{
-              color: 'text.secondary',
-              fontWeight: 500,
-            }}
-          >
-            {`${convertToNepaliNumber(currentDate.day)} ${getNepaliMonthName(
-              currentDate.month,
-              language
-            )}`}
-          </Typography>
-        </Box>
+          <ArrowBackIcon />
+        </IconButton>
 
-        <Box
+        <Typography
+          variant='h6'
           sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
+            color: 'text.secondary',
+            fontWeight: 500,
+            textAlign: 'center',
+            fontSize: { xs: '0.875rem', sm: '1rem' },
           }}
         >
-          <IconButton
-            onClick={onPrevMonth}
-            size='small'
-            sx={{
-              'bgcolor': 'action.hover',
-              '&:hover': {
-                bgcolor: 'action.selected',
-              },
-            }}
-          >
-            <ArrowBackIcon />
-          </IconButton>
+          {getEnglishMonthDisplay()}
+        </Typography>
 
-          <Typography
-            variant='caption'
-            sx={{
-              color: 'text.secondary',
-              display: { xs: 'block', sm: 'none' },
-              fontWeight: 500,
-              minWidth: 100,
-              textAlign: 'center',
-            }}
-          >
-            {getEnglishMonthDisplay()}
-          </Typography>
-
-          <IconButton
-            onClick={onNextMonth}
-            size='small'
-            sx={{
-              'bgcolor': 'action.hover',
-              '&:hover': {
-                bgcolor: 'action.selected',
-              },
-            }}
-          >
-            <ArrowForwardIcon />
-          </IconButton>
-        </Box>
+        <IconButton
+          onClick={onNextMonth}
+          size='small'
+          sx={{
+            'bgcolor': 'action.hover',
+            '&:hover': {
+              bgcolor: 'action.selected',
+            },
+          }}
+        >
+          <ArrowForwardIcon />
+        </IconButton>
       </Box>
     </Box>
   );
