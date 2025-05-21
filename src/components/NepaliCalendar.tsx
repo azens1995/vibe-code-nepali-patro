@@ -31,6 +31,7 @@ import { getEnglishDate } from '../utils/dateConversion';
 import Header from './Header';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import EventIcon from '@mui/icons-material/Event';
+import { useTheme as useMuiTheme } from '@mui/material/styles';
 
 // Utility function to convert English numbers to Nepali
 const convertToNepaliNumber = (number: number | string): string => {
@@ -173,14 +174,21 @@ const HolidayList: React.FC<{ year: number; currentMonth: number }> = ({
   );
 };
 
-const NepaliCalendar: React.FC = () => {
+interface NepaliCalendarProps {
+  onThemeChange: () => void;
+  isDarkMode: boolean;
+}
+
+const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
+  onThemeChange,
+  isDarkMode,
+}) => {
   const { t, i18n } = useTranslation();
-  const theme = useTheme();
+  const theme = useMuiTheme();
   const isMobileOrTablet = useMediaQuery(theme.breakpoints.down('md'));
   const [year, setYear] = useState<number>(2080);
   const [month, setMonth] = useState<number>(1);
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [darkMode, setDarkMode] = useState<boolean>(false);
   const [mobileView, setMobileView] = useState<'calendar' | 'holidays'>(
     'calendar'
   );
@@ -252,7 +260,7 @@ const NepaliCalendar: React.FC = () => {
   };
 
   const handleThemeToggle = () => {
-    setDarkMode(!darkMode);
+    onThemeChange();
   };
 
   const renderCalendarDay = (
@@ -371,7 +379,7 @@ const NepaliCalendar: React.FC = () => {
         bgcolor: 'background.default',
       }}
     >
-      <Header darkMode={darkMode} onThemeToggle={handleThemeToggle} />
+      <Header darkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
 
       <Box
         sx={{
@@ -380,143 +388,161 @@ const NepaliCalendar: React.FC = () => {
           flexDirection: 'column',
           p: { xs: 1, sm: 2, md: 3 },
           gap: 2,
+          mt: { xs: 7, sm: 8 },
         }}
       >
         <Box
           sx={{
-            display:
-              !isMobileOrTablet || mobileView === 'calendar' ? 'block' : 'none',
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' },
+            gap: 2,
+            height: '100%',
           }}
         >
           <Box
             sx={{
-              display: 'flex',
-              flexDirection: { xs: 'column', sm: 'row' },
-              gap: 2,
-              mb: 2,
+              display:
+                !isMobileOrTablet || mobileView === 'calendar'
+                  ? 'block'
+                  : 'none',
+              flex: { md: 2 },
+              width: '100%',
             }}
           >
-            <FormControl size='small' fullWidth>
-              <InputLabel id='year-select-label'>
-                {t('calendar.selectYear')}
-              </InputLabel>
-              <Select
-                labelId='year-select-label'
-                value={year}
-                label={t('calendar.selectYear')}
-                onChange={(e) => setYear(Number(e.target.value))}
-              >
-                {years.map((y) => (
-                  <MenuItem key={y} value={y}>
-                    {convertToNepaliNumber(y)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <FormControl size='small' fullWidth>
-              <InputLabel id='month-select-label'>
-                {t('calendar.selectMonth')}
-              </InputLabel>
-              <Select
-                labelId='month-select-label'
-                value={month}
-                label={t('calendar.selectMonth')}
-                onChange={(e) => setMonth(Number(e.target.value))}
-              >
-                {months.map((m) => (
-                  <MenuItem key={m} value={m}>
-                    {getNepaliMonthName(m, i18n.language)}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
             <Box
               sx={{
                 display: 'flex',
-                gap: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+                mb: 2,
               }}
             >
-              <IconButton
-                onClick={handlePrevMonth}
-                size='small'
-                sx={{ bgcolor: 'action.hover' }}
+              <FormControl size='small' fullWidth>
+                <InputLabel id='year-select-label'>
+                  {t('calendar.selectYear')}
+                </InputLabel>
+                <Select
+                  labelId='year-select-label'
+                  value={year}
+                  label={t('calendar.selectYear')}
+                  onChange={(e) => setYear(Number(e.target.value))}
+                >
+                  {years.map((y) => (
+                    <MenuItem key={y} value={y}>
+                      {convertToNepaliNumber(y)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <FormControl size='small' fullWidth>
+                <InputLabel id='month-select-label'>
+                  {t('calendar.selectMonth')}
+                </InputLabel>
+                <Select
+                  labelId='month-select-label'
+                  value={month}
+                  label={t('calendar.selectMonth')}
+                  onChange={(e) => setMonth(Number(e.target.value))}
+                >
+                  {months.map((m) => (
+                    <MenuItem key={m} value={m}>
+                      {getNepaliMonthName(m, i18n.language)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 1,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
-                <ArrowBackIcon />
-              </IconButton>
-              <IconButton
-                onClick={handleNextMonth}
-                size='small'
-                sx={{ bgcolor: 'action.hover' }}
-              >
-                <ArrowForwardIcon />
-              </IconButton>
+                <IconButton
+                  onClick={handlePrevMonth}
+                  size='small'
+                  sx={{ bgcolor: 'action.hover' }}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+                <IconButton
+                  onClick={handleNextMonth}
+                  size='small'
+                  sx={{ bgcolor: 'action.hover' }}
+                >
+                  <ArrowForwardIcon />
+                </IconButton>
+              </Box>
             </Box>
+
+            <Paper
+              elevation={3}
+              sx={{
+                p: { xs: 1, sm: 2 },
+                borderRadius: 2,
+                bgcolor: 'background.paper',
+                overflow: 'hidden',
+              }}
+            >
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(7, 1fr)',
+                  gap: { xs: 0.5, sm: 1 },
+                  mb: { xs: 0.5, sm: 1 },
+                }}
+              >
+                {Array.from({ length: 7 }, (_, i) => (
+                  <Typography
+                    key={i}
+                    variant='subtitle2'
+                    align='center'
+                    sx={{
+                      color: i === 6 ? 'error.main' : 'text.primary',
+                      fontSize: { xs: '0.75rem', sm: '0.875rem' },
+                      fontWeight: 'medium',
+                    }}
+                  >
+                    {getWeekDayName(i, i18n.language)}
+                  </Typography>
+                ))}
+              </Box>
+
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(7, 1fr)',
+                  gap: { xs: 0.5, sm: 1 },
+                  gridTemplateRows: 'repeat(6, 1fr)',
+                }}
+              >
+                {prevMonthDays.map((date) =>
+                  renderCalendarDay(date.day, date.month, date.year, false)
+                )}
+                {calendarDays.map((day) => renderCalendarDay(day, month, year))}
+                {nextMonthDays.map((date) =>
+                  renderCalendarDay(date.day, date.month, date.year, false)
+                )}
+              </Box>
+            </Paper>
           </Box>
 
-          <Paper
-            elevation={3}
+          <Box
             sx={{
-              p: { xs: 1, sm: 2 },
-              borderRadius: 2,
-              bgcolor: 'background.paper',
-              overflow: 'hidden',
+              display:
+                !isMobileOrTablet || mobileView === 'holidays'
+                  ? 'block'
+                  : 'none',
+              flex: { md: 1 },
+              width: '100%',
+              height: '100%',
             }}
           >
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                gap: { xs: 0.5, sm: 1 },
-                mb: { xs: 0.5, sm: 1 },
-              }}
-            >
-              {Array.from({ length: 7 }, (_, i) => (
-                <Typography
-                  key={i}
-                  variant='subtitle2'
-                  align='center'
-                  sx={{
-                    color: i === 6 ? 'error.main' : 'text.primary',
-                    fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                    fontWeight: 'medium',
-                  }}
-                >
-                  {getWeekDayName(i, i18n.language)}
-                </Typography>
-              ))}
-            </Box>
-
-            <Box
-              sx={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(7, 1fr)',
-                gap: { xs: 0.5, sm: 1 },
-                gridTemplateRows: 'repeat(6, 1fr)',
-              }}
-            >
-              {prevMonthDays.map((date) =>
-                renderCalendarDay(date.day, date.month, date.year, false)
-              )}
-              {calendarDays.map((day) => renderCalendarDay(day, month, year))}
-              {nextMonthDays.map((date) =>
-                renderCalendarDay(date.day, date.month, date.year, false)
-              )}
-            </Box>
-          </Paper>
-        </Box>
-
-        <Box
-          sx={{
-            display:
-              !isMobileOrTablet || mobileView === 'holidays' ? 'block' : 'none',
-            flex: 1,
-          }}
-        >
-          <HolidayList year={year} currentMonth={month} />
+            <HolidayList year={year} currentMonth={month} />
+          </Box>
         </Box>
       </Box>
 
