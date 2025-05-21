@@ -61,7 +61,6 @@ const nepaliHolidays: {
       1: 'New Year',
       11: 'Janak Jayanti',
       14: 'Ram Navami',
-      20: 'Atwari (Tharu Festival)',
     },
     2: {
       3: 'Akshaya Tritiya',
@@ -71,22 +70,14 @@ const nepaliHolidays: {
     3: {
       15: 'Guru Purnima',
     },
-    5: {
-      15: 'Gamharia (Tharu Festival)',
-    },
     7: {
       1: 'महाअष्टमी',
       2: 'महानवमी',
       3: 'विजया दशमी',
-      5: 'Sohrai (Tharu Festival)',
-      20: 'Jitiya Parva (Tharu Festival)',
     },
     10: {
       1: 'तमु ल्होसार',
-      15: 'माघे सङ्क्रान्ति / Maghi (Tharu Festival)',
-    },
-    11: {
-      30: 'Faguwa (Tharu Festival)',
+      15: 'माघे सङ्क्रान्ति',
     },
   },
   2081: {
@@ -94,27 +85,18 @@ const nepaliHolidays: {
       1: 'New Year',
       11: 'Janak Jayanti',
       14: 'Ram Navami',
-      20: 'Atwari (Tharu Festival)',
     },
     2: {
       7: 'Buddha Jayanti',
       15: 'Republic Day',
     },
-    5: {
-      15: 'Gamharia (Tharu Festival)',
-    },
     7: {
       1: 'महाअष्टमी',
       2: 'महानवमी',
       3: 'विजया दशमी',
-      5: 'Sohrai (Tharu Festival)',
-      20: 'Jitiya Parva (Tharu Festival)',
     },
     10: {
-      15: 'माघे सङ्क्रान्ति / Maghi (Tharu Festival)',
-    },
-    11: {
-      30: 'Faguwa (Tharu Festival)',
+      15: 'माघे सङ्क्रान्ति',
     },
   },
   2082: {
@@ -122,7 +104,6 @@ const nepaliHolidays: {
       1: 'नयाँ वर्ष',
       11: 'लोकतन्त्र दिवस',
       14: 'नेपाल सम्बत् नयाँ वर्ष',
-      20: 'अटवारी (थारु पर्व)',
     },
     2: {
       7: 'बुद्ध जयन्ती',
@@ -135,7 +116,6 @@ const nepaliHolidays: {
       30: 'बकर ईद',
     },
     4: {
-      15: 'नाग पञ्चमी',
       19: 'जनै पूर्णिमा',
       20: 'गाईजात्रा',
       23: 'श्रीकृष्ण जन्माष्टमी',
@@ -143,9 +123,9 @@ const nepaliHolidays: {
     5: {
       5: 'हरितालिका तीज',
       7: 'ऋषि पञ्चमी',
-      15: 'गमहरिया (थारु पर्व)',
       23: 'इन्द्रजात्रा',
       25: 'बाबा दे',
+      27: 'अटवारी पर्व', // Atwari festival - First Sunday after Krishna Janmashtami
     },
     6: {
       2: 'विश्वकर्मा पूजा',
@@ -156,8 +136,6 @@ const nepaliHolidays: {
       1: 'महाअष्टमी',
       2: 'महानवमी',
       3: 'विजया दशमी',
-      5: 'सोहराई (थारु पर्व)',
-      20: 'जितिया पर्व (थारु पर्व)',
     },
     8: {
       10: 'छठ पर्व',
@@ -169,12 +147,12 @@ const nepaliHolidays: {
     },
     10: {
       1: 'तमु ल्होसार',
-      15: 'माघी (थारु पर्व)',
+      15: 'माघी',
+      16: 'माघी पर्व (थारु)', // Maghi festival - Important Tharu festival
     },
     11: {
       7: 'सरस्वती पूजा',
       13: 'शिवरात्री',
-      30: 'फगुवा (थारु पर्व)',
     },
     12: {
       8: 'घोडे जात्रा',
