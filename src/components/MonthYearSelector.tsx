@@ -46,7 +46,6 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
   onMonthChange,
   onNextMonth,
   onPrevMonth,
-  onToday,
   language,
   currentDate,
 }) => {
