@@ -1,6 +1,7 @@
 import { ThemeProvider, createTheme } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import NepaliCalendar from './components/NepaliCalendar';
+import PWAInstallPrompt from './components/PWAInstallPrompt';
 import './i18n';
 import { useState, useMemo } from 'react';
 
@@ -93,6 +94,7 @@ function App() {
         onThemeChange={handleThemeChange}
         isDarkMode={mode === 'dark'}
       />
+      <PWAInstallPrompt />
     </ThemeProvider>
   );
 }

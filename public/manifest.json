@@ -1,6 +1,6 @@
 {
-  "short_name": "Nepali Calendar",
-  "name": "Nepali Calendar with Holidays",
+  "short_name": "Tharu Patra",
+  "name": "Tharu Patra - Nepali Calendar",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,22 +20,39 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "theme_color": "#1976d2",
   "background_color": "#ffffff",
   "orientation": "portrait",
   "categories": ["utilities", "productivity"],
-  "description": "A comprehensive Nepali Calendar with holidays and events",
+  "description": "A comprehensive Nepali Calendar with Tharu festivals and holidays",
   "lang": "ne",
   "dir": "ltr",
   "prefer_related_applications": false,
   "scope": "/",
+  "display_override": ["standalone", "minimal-ui"],
   "shortcuts": [
     {
       "name": "Today",
       "url": "/?today=true",
       "description": "View today's date"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Calendar View"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "720x1280",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Mobile Calendar View"
     }
   ]
 }
