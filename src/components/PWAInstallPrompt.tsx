@@ -19,6 +19,7 @@ export default function PWAInstallPrompt() {
   const [showInstallButton, setShowInstallButton] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
+  const [showIOSPrompt, setShowIOSPrompt] = useState(true);
 
   useEffect(() => {
     // Check if it's iOS
@@ -37,6 +38,7 @@ export default function PWAInstallPrompt() {
     // Check if app is already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setShowInstallButton(false);
+      setShowIOSPrompt(false);
     }
 
     return () => {
@@ -69,7 +71,11 @@ export default function PWAInstallPrompt() {
     setShowSuccessMessage(false);
   };
 
-  if (!showInstallButton && !isIOS) return null;
+  const handleCloseIOSPrompt = () => {
+    setShowIOSPrompt(false);
+  };
+
+  if ((!showInstallButton && !isIOS) || (isIOS && !showIOSPrompt)) return null;
 
   return (
     <>
@@ -111,7 +117,7 @@ export default function PWAInstallPrompt() {
             <Button
               variant='outlined'
               color='primary'
-              onClick={() => setShowInstallButton(false)}
+              onClick={handleCloseIOSPrompt}
             >
               Got it
             </Button>
