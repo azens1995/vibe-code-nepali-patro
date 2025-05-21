@@ -95,6 +95,8 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
               '& .MuiInput-input': {
                 pt: 2,
                 pb: 1,
+                pl: 1,
+                pr: 3,
               },
               '&:before': {
                 borderBottom: '1px solid',
@@ -153,6 +155,8 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
               '& .MuiInput-input': {
                 pt: 2,
                 pb: 1,
+                pl: 1,
+                pr: 3,
               },
               '&:before': {
                 borderBottom: '1px solid',
