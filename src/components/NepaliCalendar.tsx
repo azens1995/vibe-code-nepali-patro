@@ -53,16 +53,19 @@ const HolidayList: React.FC<{ year: number; currentMonth: number }> = ({
   year,
   currentMonth,
 }) => {
+  const theme = useMuiTheme();
   const allHolidays = getAllHolidays(year);
   const holidays: Holiday[] = [];
 
-  // Convert the holiday data structure into a flat array
+  // Get all holidays for the year
   Object.entries(allHolidays).forEach(([monthStr, monthHolidays]) => {
     const month = Number(monthStr);
     Object.entries(monthHolidays).forEach(([dayStr, name]) => {
       const day = Number(dayStr);
       holidays.push({
-        date: `${getNepaliMonthName(month, 'en')} ${day}`,
+        date: `${getNepaliMonthName(month, 'ne')} ${convertToNepaliNumber(
+          day
+        )}`,
         name,
         month,
         day,
@@ -82,11 +85,18 @@ const HolidayList: React.FC<{ year: number; currentMonth: number }> = ({
       sx={{
         p: 2,
         height: '100%',
+        width: '100%',
         borderRadius: 2,
         bgcolor: 'background.paper',
-        overflow: 'hidden',
+        border: '1px solid',
+        borderColor: 'divider',
         display: 'flex',
         flexDirection: 'column',
+        overflow: 'hidden',
+        boxShadow:
+          theme.palette.mode === 'light'
+            ? '0px 2px 8px rgba(0, 0, 0, 0.1)'
+            : undefined,
       }}
     >
       <Typography
@@ -95,31 +105,33 @@ const HolidayList: React.FC<{ year: number; currentMonth: number }> = ({
           mb: 2,
           color: 'primary.main',
           fontWeight: 500,
-          textAlign: 'center',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
           gap: 1,
+          flexShrink: 0,
         }}
       >
         <CalendarTodayIcon fontSize='small' />
-        Holidays {year}
+        {`सार्वजनिक बिदाहरू ${convertToNepaliNumber(year)}`}
       </Typography>
 
       <Box
         sx={{
           'overflow': 'auto',
           'flex': 1,
+          'minHeight': 0,
           '&::-webkit-scrollbar': {
             width: '8px',
           },
           '&::-webkit-scrollbar-track': {
-            bgcolor: 'action.hover',
-            borderRadius: '4px',
+            bgcolor: theme.palette.mode === 'dark' ? '#1E1E1E' : '#F5F5F5',
           },
           '&::-webkit-scrollbar-thumb': {
-            bgcolor: 'primary.main',
-            borderRadius: '4px',
+            'bgcolor': theme.palette.mode === 'dark' ? '#333333' : '#BDBDBD',
+            'borderRadius': '4px',
+            '&:hover': {
+              bgcolor: theme.palette.mode === 'dark' ? '#444444' : '#9E9E9E',
+            },
           },
         }}
       >
@@ -128,38 +140,44 @@ const HolidayList: React.FC<{ year: number; currentMonth: number }> = ({
           return (
             <Paper
               key={index}
-              elevation={isCurrentMonth ? 2 : 0}
               sx={{
-                p: 1.5,
-                mb: 1,
-                borderRadius: 1,
-                bgcolor: isCurrentMonth ? 'primary.main' : 'action.hover',
-                color: isCurrentMonth ? 'primary.contrastText' : 'text.primary',
-                transition: 'all 0.2s ease',
-                border: isCurrentMonth ? 2 : 1,
-                borderColor: isCurrentMonth ? 'primary.main' : 'divider',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 0.5,
+                'p': 1.5,
+                'mb': 1,
+                'bgcolor': isCurrentMonth
+                  ? 'primary.main'
+                  : theme.palette.mode === 'dark'
+                  ? '#2A2A2A'
+                  : '#F5F5F5',
+                'color': isCurrentMonth ? '#fff' : 'text.primary',
+                'borderRadius': 1,
+                'display': 'flex',
+                'flexDirection': 'column',
+                'gap': 0.5,
+                'boxShadow':
+                  theme.palette.mode === 'light' && !isCurrentMonth
+                    ? '0px 1px 4px rgba(0, 0, 0, 0.1)'
+                    : 'none',
+                'transition': 'all 0.2s ease',
+                '&:hover': {
+                  transform: 'translateY(-1px)',
+                  boxShadow:
+                    theme.palette.mode === 'light' && !isCurrentMonth
+                      ? '0px 4px 8px rgba(0, 0, 0, 0.1)'
+                      : 'none',
+                },
               }}
             >
-              <Typography
-                variant='subtitle2'
-                sx={{
-                  fontWeight: isCurrentMonth ? 'bold' : 'medium',
-                }}
-              >
+              <Typography variant='subtitle2' sx={{ fontWeight: 'medium' }}>
                 {holiday.name}
               </Typography>
               <Typography
                 variant='caption'
                 sx={{
-                  color: isCurrentMonth
-                    ? 'primary.contrastText'
-                    : 'text.secondary',
+                  color: isCurrentMonth ? 'inherit' : 'text.secondary',
                   display: 'flex',
                   alignItems: 'center',
                   gap: 0.5,
+                  opacity: theme.palette.mode === 'light' ? 0.87 : 0.7,
                 }}
               >
                 <EventIcon fontSize='small' />
@@ -273,55 +291,70 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
     const englishDay = dateObj.getDate();
     const holiday = getNepaliHoliday(year, month, day);
     const isHolidayAndCurrent = holiday && isCurrentMonth;
+    const isSelected = isCurrentMonth && selectedDay === day;
+
+    // Get current date to highlight today
+    const currentDate = getCurrentNepaliDate();
+    const isToday =
+      currentDate.year === year &&
+      currentDate.month === month &&
+      currentDate.day === day;
 
     return (
       <Paper
         key={`${year}-${month}-${day}`}
-        elevation={1}
+        elevation={0}
         onClick={() => isCurrentMonth && setSelectedDay(day)}
         sx={{
           'position': 'relative',
-          'width': '100%',
-          'aspectRatio': '1/1',
+          'width': '40px',
+          'height': '40px',
           'display': 'flex',
           'flexDirection': 'column',
           'alignItems': 'center',
           'justifyContent': 'center',
           'cursor': isCurrentMonth ? 'pointer' : 'default',
-          'opacity': isCurrentMonth ? 1 : 0.5,
-          'bgcolor':
-            isCurrentMonth && selectedDay === day
-              ? 'primary.main'
-              : isHolidayAndCurrent
-              ? 'error.light'
-              : 'background.paper',
-          'color':
-            (isCurrentMonth && selectedDay === day) || isHolidayAndCurrent
-              ? '#fff'
-              : 'text.primary',
+          'opacity': isCurrentMonth ? 1 : 0.3,
+          'bgcolor': isToday ? 'primary.main' : 'transparent',
+          'borderRadius': '50%',
+          'margin': 'auto',
+          'color': !isCurrentMonth
+            ? 'text.disabled'
+            : isHolidayAndCurrent
+            ? 'error.main'
+            : isToday || isSelected
+            ? '#fff'
+            : 'text.primary',
+          '& .MuiTypography-root': {
+            position: 'relative',
+            zIndex: 2,
+          },
           '&:hover': {
             bgcolor:
-              isCurrentMonth && selectedDay === day
-                ? 'primary.dark'
-                : isHolidayAndCurrent
-                ? 'error.main'
-                : 'action.hover',
+              !isSelected && !isToday
+                ? 'action.hover'
+                : isToday
+                ? 'primary.main'
+                : undefined,
           },
-          'boxShadow': 1,
+          ...(isSelected && {
+            bgcolor: 'background.paper',
+            border: '2px solid',
+            borderColor: 'primary.main',
+          }),
           'transition': 'all 0.2s ease',
-          'p': { xs: 0.5, sm: 1 },
-          'minWidth': { xs: '32px', sm: '40px', md: '48px' },
-          'minHeight': { xs: '32px', sm: '40px', md: '48px' },
         }}
       >
         <Typography
           variant='body2'
           sx={{
-            fontWeight: holiday ? 'bold' : 'normal',
-            fontSize: { xs: '0.75rem', sm: '0.875rem', md: '1rem' },
+            fontWeight: isSelected || isToday || holiday ? 'bold' : 'normal',
+            fontSize: { xs: '0.875rem', sm: '0.875rem', md: '0.875rem' },
             lineHeight: 1,
             color: 'inherit',
             mb: holiday ? 0.25 : 0,
+            position: 'relative',
+            zIndex: 1,
           }}
         >
           {convertToNepaliNumber(day)}
@@ -330,7 +363,7 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
           <Typography
             variant='caption'
             sx={{
-              fontSize: { xs: '0.5rem', sm: '0.6rem' },
+              fontSize: '0.5rem',
               fontWeight: 'medium',
               color: 'inherit',
               maxWidth: '100%',
@@ -339,6 +372,9 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
               whiteSpace: 'nowrap',
               opacity: isCurrentMonth ? 1 : 0.7,
               lineHeight: 1,
+              position: 'relative',
+              zIndex: 1,
+              mt: -0.5,
             }}
           >
             •
@@ -347,15 +383,14 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
         <Typography
           variant='caption'
           sx={{
-            fontSize: { xs: '0.5rem', sm: '0.6rem' },
-            color:
-              (isCurrentMonth && selectedDay === day) || isHolidayAndCurrent
-                ? 'rgba(255, 255, 255, 0.7)'
-                : 'text.secondary',
+            fontSize: '0.6rem',
+            color: isSelected ? 'inherit' : 'text.secondary',
             lineHeight: 1,
             position: 'absolute',
-            bottom: { xs: 1, sm: 2 },
-            right: { xs: 1, sm: 2 },
+            bottom: 2,
+            right: 2,
+            zIndex: 1,
+            opacity: 0.7,
           }}
         >
           {englishDay}
@@ -372,10 +407,11 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: 'background.default',
+        overflow: 'hidden',
       }}
     >
       <Header darkMode={isDarkMode} onThemeToggle={handleThemeToggle} />
@@ -388,6 +424,10 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
           p: { xs: 1, sm: 2, md: 3 },
           gap: 2,
           mt: { xs: 7, sm: 8 },
+          overflow: 'hidden',
+          maxWidth: '1800px',
+          width: '100%',
+          mx: 'auto',
         }}
       >
         <Box
@@ -396,16 +436,19 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
             flexDirection: { xs: 'column', md: 'row' },
             gap: 2,
             height: '100%',
+            overflow: 'hidden',
           }}
         >
           <Box
             sx={{
               display:
                 !isMobileOrTablet || mobileView === 'calendar'
-                  ? 'block'
+                  ? 'flex'
                   : 'none',
-              flex: { md: 2 },
-              width: '100%',
+              flex: { md: '0 0 800px' },
+              flexDirection: 'column',
+              height: '100%',
+              minHeight: 0,
             }}
           >
             <Box
@@ -414,17 +457,51 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                 flexDirection: { xs: 'column', sm: 'row' },
                 gap: 2,
                 mb: 2,
+                flexShrink: 0,
               }}
             >
-              <FormControl size='small' fullWidth>
-                <InputLabel id='year-select-label'>
+              <FormControl size='small' fullWidth variant='standard'>
+                <InputLabel
+                  id='year-select-label'
+                  sx={{
+                    'color': 'text.primary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  }}
+                >
                   {t('calendar.selectYear')}
                 </InputLabel>
                 <Select
                   labelId='year-select-label'
                   value={year}
-                  label={t('calendar.selectYear')}
                   onChange={(e) => setYear(Number(e.target.value))}
+                  sx={{
+                    'minHeight': '40px',
+                    '& .MuiInput-input': {
+                      pt: 2,
+                      pb: 1,
+                    },
+                    '&:before': {
+                      borderBottom: '1px solid',
+                      borderColor: 'divider',
+                    },
+                    '&:hover:not(.Mui-disabled):before': {
+                      borderBottom: '2px solid',
+                      borderColor: 'text.primary',
+                    },
+                    '&.Mui-focused:after': {
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        bgcolor: 'background.paper',
+                        maxHeight: 300,
+                      },
+                    },
+                  }}
                 >
                   {years.map((y) => (
                     <MenuItem key={y} value={y}>
@@ -434,15 +511,48 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                 </Select>
               </FormControl>
 
-              <FormControl size='small' fullWidth>
-                <InputLabel id='month-select-label'>
+              <FormControl size='small' fullWidth variant='standard'>
+                <InputLabel
+                  id='month-select-label'
+                  sx={{
+                    'color': 'text.primary',
+                    '&.Mui-focused': {
+                      color: 'primary.main',
+                    },
+                  }}
+                >
                   {t('calendar.selectMonth')}
                 </InputLabel>
                 <Select
                   labelId='month-select-label'
                   value={month}
-                  label={t('calendar.selectMonth')}
                   onChange={(e) => setMonth(Number(e.target.value))}
+                  sx={{
+                    'minHeight': '40px',
+                    '& .MuiInput-input': {
+                      pt: 2,
+                      pb: 1,
+                    },
+                    '&:before': {
+                      borderBottom: '1px solid',
+                      borderColor: 'divider',
+                    },
+                    '&:hover:not(.Mui-disabled):before': {
+                      borderBottom: '2px solid',
+                      borderColor: 'text.primary',
+                    },
+                    '&.Mui-focused:after': {
+                      borderColor: 'primary.main',
+                    },
+                  }}
+                  MenuProps={{
+                    PaperProps: {
+                      sx: {
+                        bgcolor: 'background.paper',
+                        maxHeight: 300,
+                      },
+                    },
+                  }}
                 >
                   {months.map((m) => (
                     <MenuItem key={m} value={m}>
@@ -463,14 +573,24 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                 <IconButton
                   onClick={handlePrevMonth}
                   size='small'
-                  sx={{ bgcolor: 'action.hover' }}
+                  sx={{
+                    'bgcolor': 'action.hover',
+                    '&:hover': {
+                      bgcolor: 'action.selected',
+                    },
+                  }}
                 >
                   <ArrowBackIcon />
                 </IconButton>
                 <IconButton
                   onClick={handleNextMonth}
                   size='small'
-                  sx={{ bgcolor: 'action.hover' }}
+                  sx={{
+                    'bgcolor': 'action.hover',
+                    '&:hover': {
+                      bgcolor: 'action.selected',
+                    },
+                  }}
                 >
                   <ArrowForwardIcon />
                 </IconButton>
@@ -484,14 +604,25 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                 borderRadius: 2,
                 bgcolor: 'background.paper',
                 overflow: 'hidden',
+                border: '1px solid',
+                borderColor: 'divider',
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: 0,
+                boxShadow: (theme) =>
+                  theme.palette.mode === 'light'
+                    ? '0px 2px 8px rgba(0, 0, 0, 0.1)'
+                    : undefined,
               }}
             >
               <Box
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(7, 1fr)',
-                  gap: { xs: 0.5, sm: 1 },
-                  mb: { xs: 0.5, sm: 1 },
+                  gap: { xs: 1, sm: 1.5 },
+                  mb: { xs: 1, sm: 1.5 },
+                  flexShrink: 0, // Prevent shrinking
                 }}
               >
                 {Array.from({ length: 7 }, (_, i) => (
@@ -502,7 +633,9 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                     sx={{
                       color: i === 6 ? 'error.main' : 'text.primary',
                       fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                      fontWeight: 'medium',
+                      fontWeight: 600,
+                      opacity: (theme) =>
+                        theme.palette.mode === 'light' ? 0.87 : 0.7,
                     }}
                   >
                     {getWeekDayName(i, i18n.language)}
@@ -514,8 +647,11 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
                 sx={{
                   display: 'grid',
                   gridTemplateColumns: 'repeat(7, 1fr)',
-                  gap: { xs: 0.5, sm: 1 },
+                  gap: { xs: 1, sm: 1.5 },
                   gridTemplateRows: 'repeat(6, 1fr)',
+                  flex: 1,
+                  minHeight: 0, // Important for flex child
+                  alignItems: 'center',
                 }}
               >
                 {prevMonthDays.map((date) =>
@@ -533,11 +669,11 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
             sx={{
               display:
                 !isMobileOrTablet || mobileView === 'holidays'
-                  ? 'block'
+                  ? 'flex'
                   : 'none',
-              flex: { md: 1 },
-              width: '100%',
+              flex: { md: '0 0 400px' },
               height: '100%',
+              minHeight: 0,
             }}
           >
             <HolidayList year={year} currentMonth={month} />
@@ -547,7 +683,13 @@ const NepaliCalendar: React.FC<NepaliCalendarProps> = ({
 
       {isMobileOrTablet && (
         <Paper
-          sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 10,
+          }}
           elevation={3}
         >
           <BottomNavigation

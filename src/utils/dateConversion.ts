@@ -9,43 +9,42 @@ const BASE_BS_DATE = {
 
 const BASE_AD_DATE = new Date(1983, 3, 14); // Month is 0-based in JS Date
 
-// Function to get English (Gregorian) date from Nepali date
-export const getEnglishDate = (
-  year: number,
-  month: number,
-  day: number
-): string => {
-  const totalDays = getDaysSinceBase(year, month, day);
-  const date = new Date(BASE_AD_DATE);
-  date.setDate(date.getDate() + totalDays);
-
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
-
-// Helper function to calculate days since base date
-const getDaysSinceBase = (year: number, month: number, day: number): number => {
+// Function to get days since base date
+const getDaysSinceBase = (
+  nepaliYear: number,
+  nepaliMonth: number,
+  nepaliDay: number
+): number => {
   let totalDays = 0;
 
-  // Add days for complete years
-  for (let y = BASE_BS_DATE.year; y < year; y++) {
-    for (let m = 1; m <= 12; m++) {
-      totalDays += getNepaliMonthDays(y, m);
+  // Calculate days from base year to target year
+  for (let year = 2040; year < nepaliYear; year++) {
+    for (let month = 1; month <= 12; month++) {
+      totalDays += getNepaliMonthDays(year, month);
     }
   }
 
-  // Add days for complete months in current year
-  for (let m = 1; m < month; m++) {
-    totalDays += getNepaliMonthDays(year, m);
+  // Add days for months in target year
+  for (let month = 1; month < nepaliMonth; month++) {
+    totalDays += getNepaliMonthDays(nepaliYear, month);
   }
 
-  // Add remaining days in current month
-  totalDays += day - BASE_BS_DATE.day;
+  // Add days in target month
+  totalDays += nepaliDay - 1;
 
   return totalDays;
+};
+
+// Function to convert Nepali date to English date
+export const getEnglishDate = (
+  nepaliYear: number,
+  nepaliMonth: number,
+  nepaliDay: number
+): string => {
+  const totalDays = getDaysSinceBase(nepaliYear, nepaliMonth, nepaliDay);
+  const targetDate = new Date(BASE_AD_DATE);
+  targetDate.setDate(BASE_AD_DATE.getDate() + totalDays);
+  return targetDate.toISOString().split('T')[0];
 };
 
 export const getNepaliDate = (
