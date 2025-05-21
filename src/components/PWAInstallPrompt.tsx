@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, Snackbar, Box } from '@mui/material';
+import { Button, Snackbar, Box, IconButton } from '@mui/material';
 import GetAppIcon from '@mui/icons-material/GetApp';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -38,6 +39,12 @@ export default function PWAInstallPrompt() {
       e.preventDefault();
       setDeferredPrompt(e);
       setShowInstallButton(true);
+
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        setShowInstallButton(false);
+        setDeferredPrompt(null);
+      }, 3000);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -83,6 +90,11 @@ export default function PWAInstallPrompt() {
     setShowIOSPrompt(false);
   };
 
+  const handleClosePrompt = () => {
+    setShowInstallButton(false);
+    setDeferredPrompt(null);
+  };
+
   if ((!showInstallButton && !isIOS) || (isIOS && !showIOSPrompt)) return null;
 
   return (
@@ -113,38 +125,49 @@ export default function PWAInstallPrompt() {
           },
         }}
       >
-        {isIOS ? (
-          <>
-            <Box sx={{ fontSize: '0.875rem', mb: 1 }}>
-              To install this app on iOS:
-              <ol style={{ margin: '8px 0', paddingLeft: '20px' }}>
-                <li>Tap the Share button</li>
-                <li>Scroll down and tap "Add to Home Screen"</li>
-              </ol>
-            </Box>
-            <Button
-              variant='outlined'
-              color='primary'
-              onClick={handleCloseIOSPrompt}
-            >
-              Got it
-            </Button>
-          </>
-        ) : (
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={handleInstallClick}
-            startIcon={<GetAppIcon />}
-            fullWidth
-            sx={{
-              borderRadius: '8px',
-              py: 1.5,
-            }}
-          >
-            Install App for Offline Use
-          </Button>
-        )}
+        <Box sx={{ display: 'flex', alignItems: 'flex-start', width: '100%' }}>
+          {isIOS ? (
+            <>
+              <Box sx={{ flex: 1, fontSize: '0.875rem', mb: 1 }}>
+                To install this app on iOS:
+                <ol style={{ margin: '8px 0', paddingLeft: '20px' }}>
+                  <li>Tap the Share button</li>
+                  <li>Scroll down and tap "Add to Home Screen"</li>
+                </ol>
+              </Box>
+              <IconButton
+                size='small'
+                onClick={handleCloseIOSPrompt}
+                sx={{ ml: 1, mt: -1, mr: -1 }}
+              >
+                <CloseIcon fontSize='small' />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={handleInstallClick}
+                startIcon={<GetAppIcon />}
+                fullWidth
+                sx={{
+                  borderRadius: '8px',
+                  py: 1.5,
+                }}
+              >
+                Install App for Offline Use
+              </Button>
+              <IconButton
+                size='small'
+                onClick={handleClosePrompt}
+                sx={{ ml: 1, mt: -1, mr: -1 }}
+              >
+                <CloseIcon fontSize='small' />
+              </IconButton>
+            </>
+          )}
+        </Box>
       </Box>
       <Snackbar
         open={showSuccessMessage}
