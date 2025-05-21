@@ -1,23 +1,30 @@
 {
-  "short_name": "Tharu Patra",
-  "name": "Tharu Patra - Nepali Calendar",
+  "short_name": "Nepali Patra",
+  "name": "Nepali Patra - Nepali Calendar",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "nepali-patra.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "logo192.png",
+      "src": "nepali-patra-192.png",
       "type": "image/png",
       "sizes": "192x192",
       "purpose": "any maskable"
     },
     {
-      "src": "logo512.png",
+      "src": "nepali-patra-512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any"
     }
   ],
   "start_url": "/",
@@ -26,7 +33,7 @@
   "background_color": "#ffffff",
   "orientation": "portrait",
   "categories": ["utilities", "productivity"],
-  "description": "A comprehensive Nepali Calendar with Tharu festivals and holidays",
+  "description": "A comprehensive Nepali Calendar with festivals and holidays",
   "lang": "ne",
   "dir": "ltr",
   "prefer_related_applications": false,
