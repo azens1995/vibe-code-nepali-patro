@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="topGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef5350;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e53935;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Calendar base with rounded corners -->
+  <rect width="400" height="450" x="56" y="31" rx="40" fill="url(#bgGrad)" />
+  
+  <!-- Calendar top bar -->
+  <rect width="400" height="100" x="56" y="31" rx="40" fill="url(#topGrad)" />
+  
+  <!-- Calendar binding rings -->
+  <g fill="#d4b872">
+    <circle cx="116" cy="31" r="20" />
+    <circle cx="196" cy="31" r="20" />
+    <circle cx="276" cy="31" r="20" />
+    <circle cx="356" cy="31" r="20" />
+    <circle cx="436" cy="31" r="20" />
+  </g>
+  
+  <!-- Calendar grid -->
+  <g fill="#90caf9">
+    <rect x="96" y="161" width="60" height="60" rx="8" />
+    <rect x="176" y="161" width="60" height="60" rx="8" />
+    <rect x="256" y="161" width="60" height="60" rx="8" />
+    <rect x="336" y="161" width="60" height="60" rx="8" />
+    
+    <rect x="96" y="241" width="60" height="60" rx="8" />
+    <rect x="176" y="241" width="60" height="60" rx="8" />
+    <rect x="256" y="241" width="60" height="60" rx="8" />
+    <rect x="336" y="241" width="60" height="60" rx="8" />
+    
+    <rect x="96" y="321" width="60" height="60" rx="8" />
+    <rect x="176" y="321" width="60" height="60" rx="8" />
+    <rect x="256" y="321" width="60" height="60" rx="8" />
+    <rect x="336" y="321" width="60" height="60" rx="8" />
+  </g>
+  
+  <!-- Highlighted days (in red) -->
+  <g fill="#ef5350">
+    <rect x="336" y="161" width="60" height="60" rx="8" />
+    <rect x="336" y="241" width="60" height="60" rx="8" />
+    <rect x="336" y="321" width="60" height="60" rx="8" />
+  </g>
+</svg> 
