@@ -11,8 +11,12 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { getNepaliMonthName } from '../utils/nepaliCalendar';
+import {
+  getNepaliMonthName,
+  getNepaliMonthDays,
+} from '../utils/nepaliCalendar';
 import { convertToNepaliNumber } from '../utils/numberConverter';
+import { getEnglishADDate } from '../utils/dateConversion';
 
 interface MonthYearSelectorProps {
   year: number;
@@ -45,6 +49,28 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
   language,
   t,
 }) => {
+  // Get English month names for current and next month
+  const getEnglishMonthDisplay = () => {
+    const firstDayOfMonth = getEnglishADDate(year, month, 1);
+    const lastDayOfMonth = getEnglishADDate(
+      year,
+      month,
+      getNepaliMonthDays(year, month)
+    );
+
+    const firstMonthName = firstDayOfMonth.toLocaleString('en-US', {
+      month: 'long',
+    });
+    const lastMonthName = lastDayOfMonth.toLocaleString('en-US', {
+      month: 'long',
+    });
+    const yearDisplay = lastDayOfMonth.getFullYear();
+
+    return firstMonthName === lastMonthName
+      ? `${firstMonthName} ${yearDisplay}`
+      : `${firstMonthName}/${lastMonthName} ${yearDisplay}`;
+  };
+
   return (
     <Box
       sx={{
@@ -243,6 +269,18 @@ const MonthYearSelector: React.FC<MonthYearSelectorProps> = ({
           pt: { xs: 1, sm: 0 },
         }}
       >
+        <Typography
+          variant='body2'
+          sx={{
+            color: 'text.secondary',
+            mr: 2,
+            minWidth: 120,
+            textAlign: 'right',
+            display: { xs: 'none', sm: 'block' },
+          }}
+        >
+          {getEnglishMonthDisplay()}
+        </Typography>
         <IconButton
           onClick={onPrev}
           size='small'
