@@ -1,0 +1,33 @@
+{
+  "calendar": {
+    "title": "नेपाली पात्रो",
+    "months": {
+      "baisakh": "बैशाख",
+      "jestha": "जेठ",
+      "ashar": "असार",
+      "shrawan": "श्रावण",
+      "bhadra": "भाद्र",
+      "ashwin": "आश्विन",
+      "kartik": "कार्तिक",
+      "mangsir": "मंसिर",
+      "poush": "पुष",
+      "magh": "माघ",
+      "falgun": "फाल्गुन",
+      "chaitra": "चैत्र"
+    },
+    "weekdays": {
+      "sunday": "आइतबार",
+      "monday": "सोमबार",
+      "tuesday": "मंगलबार",
+      "wednesday": "बुधबार",
+      "thursday": "बिहिबार",
+      "friday": "शुक्रबार",
+      "saturday": "शनिबार"
+    },
+    "selectYear": "वर्ष चयन गर्नुहोस्",
+    "selectMonth": "महिना चयन गर्नुहोस्",
+    "today": "आज",
+    "view": "पात्रो",
+    "holidays": "चाडपर्वहरू"
+  }
+}

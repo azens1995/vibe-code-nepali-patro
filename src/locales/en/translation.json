@@ -1,0 +1,33 @@
+{
+  "calendar": {
+    "title": "Nepali Calendar",
+    "months": {
+      "baisakh": "Baisakh",
+      "jestha": "Jestha",
+      "ashar": "Ashar",
+      "shrawan": "Shrawan",
+      "bhadra": "Bhadra",
+      "ashwin": "Ashwin",
+      "kartik": "Kartik",
+      "mangsir": "Mangsir",
+      "poush": "Poush",
+      "magh": "Magh",
+      "falgun": "Falgun",
+      "chaitra": "Chaitra"
+    },
+    "weekdays": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "selectYear": "Select Year",
+    "selectMonth": "Select Month",
+    "today": "Today",
+    "view": "Calendar",
+    "holidays": "Holidays"
+  }
+}
