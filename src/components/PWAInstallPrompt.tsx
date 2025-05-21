@@ -13,19 +13,26 @@ declare global {
   }
 }
 
+const IOS_PROMPT_DISMISSED_KEY = 'ios_prompt_dismissed';
+
 export default function PWAInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallButton, setShowInstallButton] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
-  const [showIOSPrompt, setShowIOSPrompt] = useState(true);
+  const [showIOSPrompt, setShowIOSPrompt] = useState(false);
 
   useEffect(() => {
     // Check if it's iOS
     const isIOSDevice =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
     setIsIOS(isIOSDevice);
+
+    // Check localStorage for iOS prompt state
+    const iosPromptDismissed =
+      localStorage.getItem(IOS_PROMPT_DISMISSED_KEY) === 'true';
+    setShowIOSPrompt(isIOSDevice && !iosPromptDismissed);
 
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
       e.preventDefault();
@@ -72,6 +79,7 @@ export default function PWAInstallPrompt() {
   };
 
   const handleCloseIOSPrompt = () => {
+    localStorage.setItem(IOS_PROMPT_DISMISSED_KEY, 'true');
     setShowIOSPrompt(false);
   };
 
