@@ -12,7 +12,6 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   useMediaQuery,
-  useTheme,
 } from '@mui/material';
 import {
   generateCalendarDays,
